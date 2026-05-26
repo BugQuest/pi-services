@@ -8,9 +8,16 @@ Wants=network-online.target
 Type=exec
 User=realitynauts
 Group=realitynauts
-WorkingDirectory=/home/realitynauts/wifi-radar-backend
+WorkingDirectory=/home/realitynauts/wifi-radar/backend
 Environment=RADAR_BAUD=115200
-ExecStart=/home/realitynauts/wifi-radar-backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Static frontend lives in backend/static (built locally by `npm run build` and
+# copied or symlinked there).  Data (DuckDB, parquet, config.json) stays in
+# ~/wifi-radar-data/ via the RADAR_DATA env default — survives a repo wipe.
+Environment=RADAR_STATIC=/home/realitynauts/wifi-radar/backend/static
+# esptool.py needs to be on PATH for the in-UI firmware updater (panel 🔥).
+# Adjust the IDF path if you installed it elsewhere.
+Environment=PATH=/home/realitynauts/esp/esp-idf/components/esptool_py/esptool:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/home/realitynauts/wifi-radar/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=3
 StandardOutput=journal
