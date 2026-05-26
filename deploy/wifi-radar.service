@@ -14,9 +14,12 @@ Environment=RADAR_BAUD=115200
 # copied or symlinked there).  Data (DuckDB, parquet, config.json) stays in
 # ~/wifi-radar-data/ via the RADAR_DATA env default — survives a repo wipe.
 Environment=RADAR_STATIC=/home/realitynauts/wifi-radar/backend/static
-# esptool.py needs to be on PATH for the in-UI firmware updater (panel 🔥).
-# Adjust the IDF path if you installed it elsewhere.
-Environment=PATH=/home/realitynauts/esp/esp-idf/components/esptool_py/esptool:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# esptool for the in-UI firmware updater (panel 🔥).  We point at the
+# pip-installed wrapper inside the IDF Python venv — it's executable, has a
+# correct shebang to the venv interpreter, and brings esptool's deps along.
+# The one at .../components/esptool_py/esptool/esptool.py is NOT +x.
+# Adjust the version-tagged path (idf5.5_py3.14_env) if your IDF install differs.
+Environment=RADAR_ESPTOOL=/home/realitynauts/.espressif/python_env/idf5.5_py3.14_env/bin/esptool.py
 ExecStart=/home/realitynauts/wifi-radar/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=3
