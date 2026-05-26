@@ -1,0 +1,28 @@
+[Unit]
+Description=pi-services dashboard (FastAPI on :8001)
+Documentation=https://github.com/BugQuest/pi-services
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=realitynauts
+Group=realitynauts
+WorkingDirectory=/home/realitynauts/pi-services
+Environment=PI_SERVICES_STATIC_DIR=/home/realitynauts/pi-services/static
+Environment=PI_SERVICES_ENABLED_DIR=/etc/pi-services/enabled
+ExecStart=/home/realitynauts/pi-services/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8001
+Restart=on-failure
+RestartSec=3
+# journal capture
+StandardOutput=journal
+StandardError=journal
+# light hardening (we do need to spawn systemctl/journalctl so we keep things
+# permissive; tighten later if you want)
+NoNewPrivileges=false
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/realitynauts/pi-services
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+# Allow the dashboard (running as `realitynauts`) to control systemd units
+# without a password.  Install with:
+#
+#   sudo install -m 0440 deploy/sudoers.d-pi-services /etc/sudoers.d/pi-services
+#   sudo visudo -c        # validate
+#
+# The dashboard rejects any name not matching ^[A-Za-z0-9@:._-]+\.(service|timer|socket|target|path)$
+# at the API layer, but defence-in-depth lives at the sudoers level too:
+# we restrict the *command words* to the four lifecycle verbs.
+
+Cmnd_Alias PI_SERVICES_CTL = \
+    /bin/systemctl start *, \
+    /bin/systemctl stop *, \
+    /bin/systemctl restart *, \
+    /bin/systemctl reload *
+
+realitynauts ALL=(root) NOPASSWD: PI_SERVICES_CTL

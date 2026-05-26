@@ -1,0 +1,17 @@
+[project]
+name = "pi-services"
+version = "0.1.0"
+description = "Web dashboard to manage systemd services on a Raspberry Pi"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["backend"]

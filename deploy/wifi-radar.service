@@ -1,0 +1,23 @@
+[Unit]
+Description=WiFi radar backend (ESP32 sensors + FastAPI on :8000)
+Documentation=https://github.com/BugQuest/wifi-radar
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=realitynauts
+Group=realitynauts
+WorkingDirectory=/home/realitynauts/wifi-radar-backend
+Environment=RADAR_BAUD=115200
+ExecStart=/home/realitynauts/wifi-radar-backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+# needs access to /dev/ttyUSB* — keep the user in the dialout group instead of
+# adding device ACL exceptions here
+SupplementaryGroups=dialout
+
+[Install]
+WantedBy=multi-user.target
